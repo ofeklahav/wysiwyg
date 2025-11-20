@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MD Studio Pro - Final Version (No Fluff)</title>
+    <title>Markdown-Docx Editor</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,7 +13,6 @@
     <script src="https://unpkg.com/turndown-plugin-gfm/dist/turndown-plugin-gfm.js"></script>
 
     <style>
-        /* --- איזור העיצוב --- */
         :root {
             --bg-app: #eef2f6;
             --bg-panel: #ffffff;
@@ -23,13 +22,12 @@
             --toolbar-bg: #ffffff;
         }
 
-        /* --- דארק מוד (גירסת גווני אפור-שחור) --- */
         [data-theme="dark"] {
-            --bg-app: #1c1c1c; /* אפור כהה מאוד לרקע */
-            --bg-panel: #2d2d2d; /* אפור כהה לפאנלים */
-            --border: #444444; /* קווי גבול כהים */
-            --primary: #5bc0be; /* הדגשה ראשית (ירוק-ציאן בהיר) */
-            --text: #f0f0f0; /* טקסט בהיר */
+            --bg-app: #1c1c1c;
+            --bg-panel: #2d2d2d;
+            --border: #444444;
+            --primary: #5bc0be;
+            --text: #f0f0f0;
             --toolbar-bg: #2d2d2d; 
         }
 
@@ -175,7 +173,7 @@
             padding: 30px; 
             display: flex;
             justify-content: center; 
-            align-items: flex-start; /* **תיקון קריטי לגובה** */
+            align-items: flex-start;
         }
 
         #visualEditor {
@@ -207,26 +205,19 @@
         #visualEditor td, #visualEditor th { border: 1px solid var(--border); padding: 8px; overflow-wrap: break-word; }
         #visualEditor th { background: rgba(0,0,0,0.05); }
 
-        /* --- הוספת כלל לקישורים בתוך העורך הויזואלי (חדש) --- */
         #visualEditor a {
-            color: var(--primary); /* ברירת מחדל, משתמש בצבע ההדגשה הראשי */
-            text-decoration: underline; /* הדגשה בקו תחתון */
+            color: var(--primary);
+            text-decoration: underline;
         }
         
-        /* הגדרת קישורים במצב Dark Mode - צבע ה-primary ( #5bc0be) אמור לספק קונטרסט טוב */
         [data-theme="dark"] #visualEditor a {
-            color: var(--primary); /* הצבע הבהיר שהוגדר עבור Dark Mode */
+            color: var(--primary);
         }
-        /* --- סוף כלל קישורים --- */
 
-
-        /* --- עיצוב לתמונות Placeholder / שבורות --- */
         #visualEditor img:not([src^="http"]):not([src^="data:"]) {
-            /* הסתר את אייקון התמונה השבורה המקורי */
             -moz-force-broken-image-icon: 0;
             -webkit-force-broken-image-icon: 0;
             
-            /* מאפייני ה-Placeholder */
             display: inline-block;
             width: 150px; 
             height: 100px; 
@@ -238,29 +229,25 @@
             font-size: 12px;
             font-style: italic;
             object-fit: contain;
-            content: attr(alt); /* מציג את ה-alt text */
+            content: attr(alt);
             padding: 5px;
             margin: 5px 0; 
             
-            /* אייקון Placeholder - SVG */
             background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23a0a0a0"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>');
             background-repeat: no-repeat;
             background-position: center;
             background-size: 50%;
             
-            /* הסתרת ה-alt text המקורי */
             text-indent: -9999px;
             overflow: hidden;
         }
 
-        /* דארק מוד עבור Placeholder */
         [data-theme="dark"] #visualEditor img:not([src^="http"]):not([src^="data:"]) {
             background-color: #3c3c3c;
             border-color: #666;
             color: #bbb;
             background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23888888"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>');
         }
-        /* --- סוף עיצוב Placeholder --- */
 
         .resizer {
             width: 10px;
@@ -277,7 +264,6 @@
         .sep { width: 1px; height: 20px; background: var(--border); margin: 0 5px; }
 
 
-        /* --- עיצוב המודל המותאם אישית --- */
         #customModal {
             position: fixed;
             top: 0;
@@ -445,20 +431,17 @@
     </div>
 
     <script>
-        // אלמנטים
         const editor = document.getElementById('editor');
         const visual = document.getElementById('visualEditor');
         const gutter = document.getElementById('gutter');
         const themeIcon = document.getElementById('themeIcon');
         
-        // אלמנטים של המודל
         const customModal = document.getElementById('customModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalInputs = document.getElementById('modalInputs');
         const modalConfirm = document.getElementById('modalConfirm');
         const modalCancel = document.getElementById('modalCancel');
 
-        // הגדרת Turndown עם תוסף הטבלאות (GFM)
         const turndownService = new TurndownService({
             headingStyle: 'atx',
             codeBlockStyle: 'fenced'
@@ -467,8 +450,6 @@
 
         let isSyncing = false;
         let syncTimeoutId = null;
-
-        // --- 1. לוגיקת סנכרון (עם Debounce) ---
 
         function syncCodeToVisual() {
              if (isSyncing) return;
@@ -507,11 +488,8 @@
              }, 50);
         }
         
-        // הגדרת מאזינים
         editor.addEventListener('input', syncCodeToVisual);
         visual.addEventListener('input', syncVisualToCode);
-
-        // --- 2. פונקציות עורך ויזואלי ---
 
         editor.addEventListener('scroll', () => gutter.scrollTop = editor.scrollTop);
 
@@ -525,12 +503,6 @@
             syncVisualToCode(); 
         }
 
-        /**
-         * מציג מודל קלט מותאם אישית
-         * @param {string} title - הכותרת של המודל
-         * @param {Array<{id: string, label: string, type: string, defaultValue: string}>} fields - מערך שדות הקלט
-         * @returns {Promise<Object | null>} - אובייקט עם ערכי השדות או null אם בוטל
-         */
         function showCustomPrompt(title, fields) {
             return new Promise(resolve => {
                 modalTitle.textContent = title;
@@ -582,14 +554,13 @@
             });
         }
 
-        // --- פונקציית טבלה (משתמשת במודל המותאם אישית) ---
         async function insertMarkdownTable() {
             const results = await showCustomPrompt("יצירת טבלה", [
                 { id: 'rows', label: "מספר שורות (כולל כותרת)", type: 'number', defaultValue: '3' },
                 { id: 'cols', label: "מספר עמודות", type: 'number', defaultValue: '2' }
             ]);
 
-            if (!results) return; // בוטל
+            if (!results) return;
 
             const rows = parseInt(results.rows) || 3;
             const cols = parseInt(results.cols) || 2;
@@ -625,63 +596,49 @@
             syncCodeToVisual();
         }
         
-        // --- פונקציית תמונה (מתוקן: הטמעה ישירות ל-Markdown) ---
         async function insertImage() {
             const results = await showCustomPrompt("הוספת תמונה", [
                 { id: 'url', label: "כתובת URL לתמונה", type: 'text', defaultValue: 'https://' },
                 { id: 'alt', label: "טקסט חלופי (Alt Text)", type: 'text', defaultValue: '' }
             ]);
 
-            if (!results) return; // בוטל
+            if (!results) return;
 
             const { url, alt } = results;
             
-            // יצירת מחרוזת Markdown לתמונה
             const mdImage = `![${alt || 'תמונה'}](${url})\n\n`;
 
-            // הטמעת ה-Markdown ישירות לתוך ה-Textarea
             const start = editor.selectionStart;
             const end = editor.selectionEnd;
             const value = editor.value;
 
             editor.value = value.substring(0, start) + mdImage + value.substring(end);
             
-            // מיקום הסמן לאחר הטקסט שהוכנס
             editor.selectionStart = editor.selectionEnd = start + mdImage.length;
             editor.focus();
             
-            // סנכרון הקוד לויזואלי כדי להציג את התמונה
             syncCodeToVisual();
         }
 
-        // --- פונקציית קוד (מתוקן: הטמעה ישירות ל-Markdown) ---
         function insertCode() {
-            // תחביר בלוק קוד ב-Markdown (Fenced Code Block)
             const mdCode = "\n```javascript\n// כתוב את הקוד שלך כאן\n```\n\n";
             
-            // הטמעת ה-Markdown ישירות לתוך ה-Textarea
             const start = editor.selectionStart;
             const end = editor.selectionEnd;
             const value = editor.value;
 
             editor.value = value.substring(0, start) + mdCode + value.substring(end);
             
-            // מיקום הסמן בתוך בלוק הקוד כדי להתחיל לכתוב
-            editor.selectionStart = editor.selectionEnd = start + 4 + "javascript\n".length; // +4 עבור \n```
+            editor.selectionStart = editor.selectionEnd = start + 4 + "javascript\n".length; 
             editor.focus();
             
-            // סנכרון הקוד לויזואלי כדי להציג את בלוק הקוד
             syncCodeToVisual();
         }
 
 
-        // --- 3. פונקציות מערכת ---
-        
         window.onload = () => {
-            // הגדרת תוכן התחלתי
             editor.value = "# עורך היברידי - גרסה סופית\n\n**כל הפונקציות עובדות באופן יציב!** הוטמע CSS להצגת **Placeholder** לתמונות עם נתיב יחסי או שבור (שאינו מתחיל ב-http/s).\n\n**בדיקת תמונה (Placeholder):**\n\n![תמונה מקומית או שבורה](images/image1.jpg)\n\n**בדיקת תמונה (URL תקין):**\n\n![תמונה לדוגמה](https://via.placeholder.com/150)\n\n**בדיקת קוד:**\n\n```javascript\nconsole.log('שלום עולם!');\n```\n\n**בדיקת קישור (Hyperlink):**\n\n[זהו קישור בדיקה](https://example.com)\n\n ";
             syncCodeToVisual(); 
-            // לוודא שהאייקון מתאים לערכת הנושא הראשונית
             if (document.body.getAttribute('data-theme') === 'dark') {
                 themeIcon.classList.replace('fa-moon', 'fa-sun');
             } else {
@@ -729,7 +686,6 @@
             a.click();
         }
 
-        // --- 4. ניהול גרירה (ללא שינוי) ---
         const resizer = document.getElementById('resizer');
         const leftPane = document.getElementById('codePane');
         const rightPane = document.getElementById('visualPane');
@@ -756,7 +712,6 @@
             }
         });
 
-        // קיצורי מקלדת גלובליים
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.key.toLowerCase() === 'z' && document.activeElement !== editor) {
                 e.preventDefault(); document.execCommand('undo');
