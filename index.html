@@ -1,358 +1,22 @@
 <!DOCTYPE html>
 <html lang="he">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown-Docx Editor</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link rel="stylesheet" href="style.css">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
     <script src="https://unpkg.com/turndown/dist/turndown.js"></script>
     <script src="https://unpkg.com/turndown-plugin-gfm/dist/turndown-plugin-gfm.js"></script>
-
-    <style>
-        :root {
-            --bg-app: #eef2f6;
-            --bg-panel: #ffffff;
-            --border: #dce0e5;
-            --primary: #3b82f6;
-            --text: #1f2937;
-            --toolbar-bg: #ffffff;
-        }
-
-        [data-theme="dark"] {
-            --bg-app: #1c1c1c;
-            --bg-panel: #2d2d2d;
-            --border: #444444;
-            --primary: #5bc0be;
-            --text: #f0f0f0;
-            --toolbar-bg: #2d2d2d; 
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-
-        body {
-            font-family: 'Rubik', sans-serif;
-            background: var(--bg-app);
-            color: var(--text);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .main-header {
-            height: 40px;
-            background: var(--toolbar-bg);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-            justify-content: space-between;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text);
-            direction: ltr;
-        }
-        .brand { display: flex; align-items: center; gap: 10px; }
-        .brand span { font-weight: bold; color: var(--primary); }
-
-        .system-tools { display: flex; gap: 5px; }
-
-        .workspace {
-            flex: 1;
-            display: flex;
-            height: calc(100vh - 40px);
-        }
-
-        .pane-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 200px;
-            background: var(--bg-panel);
-            position: relative;
-        }
-
-        .pane-toolbar {
-            height: 45px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            padding: 0 10px;
-            gap: 5px;
-            background: var(--toolbar-bg);
-            direction: ltr;
-        }
-
-        .toolbar-label {
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            color: #9ca3af;
-            margin-right: 10px;
-            margin-left: auto;
-        }
-
-        .btn {
-            width: auto;
-            min-width: 30px;
-            height: 30px;
-            border-radius: 4px;
-            border: 1px solid transparent;
-            background: transparent;
-            color: var(--text);
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            padding: 0 8px;
-            font-weight: 500;
-        }
-        .btn:hover { background: rgba(0,0,0,0.05); color: var(--primary); }
-        [data-theme="dark"] .btn:hover { background: rgba(255,255,255,0.1); }
-
-        .editor-area {
-            flex: 1;
-            display: flex;
-            position: relative;
-        }
-        .gutter {
-            width: 40px;
-            background: rgba(0,0,0,0.02);
-            border-right: 1px solid var(--border);
-            text-align: right;
-            padding: 10px 5px;
-            font-family: 'Fira Code', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #999;
-            user-select: none;
-        }
-        textarea {
-            flex: 1;
-            border: none;
-            resize: none;
-            background: var(--bg-panel);
-            color: var(--text);
-            padding: 10px;
-            font-family: 'Fira Code', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-            white-space: pre;
-        }
-
-        .visual-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-app);
-            min-width: 200px;
-            overflow-x: auto; 
-        }
-
-        .visual-toolbar {
-            height: 45px;
-            background: var(--toolbar-bg);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-            gap: 5px;
-            justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            direction: ltr;
-        }
-
-        .visual-scroll-area {
-            flex: 1;
-            overflow-y: auto; 
-            padding: 30px; 
-            display: flex;
-            justify-content: center; 
-            align-items: flex-start;
-        }
-
-        #visualEditor {
-            width: 100%;
-            max-width: 800px; 
-            min-height: auto; 
-            height: auto; 
-            background: var(--bg-panel);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
-            padding: 50px; 
-            border-radius: 2px;
-            font-size: 16px;
-            line-height: 1.8;
-            cursor: text;
-        }
-        
-        #visualEditor > * {
-            max-width: 100% !important; 
-        }
-
-        .rtl-content textarea, .rtl-content #visualEditor { direction: rtl; text-align: right; }
-        .ltr-content textarea, .ltr-content #visualEditor { direction: ltr; text-align: left; }
-
-        #visualEditor h1 { border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-top: 1em; color: var(--primary); }
-        #visualEditor blockquote { border-right: 4px solid var(--primary); background: rgba(0,0,0,0.03); padding: 10px; margin: 10px 0; color: #666; }
-        [data-theme="dark"] #visualEditor blockquote { background: #3c3c3c; } 
-        #visualEditor pre { background: #282c34; color: #abb2bf; padding: 15px; border-radius: 5px; direction: ltr; text-align: left; margin: 15px 0; }
-        #visualEditor table { width: 100%; border-collapse: collapse; margin: 15px 0; table-layout: fixed; } 
-        #visualEditor td, #visualEditor th { border: 1px solid var(--border); padding: 8px; overflow-wrap: break-word; }
-        #visualEditor th { background: rgba(0,0,0,0.05); }
-
-        #visualEditor a {
-            color: var(--primary);
-            text-decoration: underline;
-        }
-        
-        [data-theme="dark"] #visualEditor a {
-            color: var(--primary);
-        }
-
-        #visualEditor img:not([src^="http"]):not([src^="data:"]) {
-            -moz-force-broken-image-icon: 0;
-            -webkit-force-broken-image-icon: 0;
-            
-            display: inline-block;
-            width: 150px; 
-            height: 100px; 
-            background-color: var(--bg-app);
-            border: 1px dashed var(--border);
-            color: var(--text);
-            text-align: center;
-            line-height: 100px;
-            font-size: 12px;
-            font-style: italic;
-            object-fit: contain;
-            content: attr(alt);
-            padding: 5px;
-            margin: 5px 0; 
-            
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23a0a0a0"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 50%;
-            
-            text-indent: -9999px;
-            overflow: hidden;
-        }
-
-        [data-theme="dark"] #visualEditor img:not([src^="http"]):not([src^="data:"]) {
-            background-color: #3c3c3c;
-            border-color: #666;
-            color: #bbb;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23888888"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>');
-        }
-
-        .resizer {
-            width: 10px;
-            background: var(--bg-app);
-            cursor: col-resize;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-inline: 1px solid var(--border);
-            z-index: 10;
-        }
-        .resizer:hover { background: var(--primary); }
-
-        .sep { width: 1px; height: 20px; background: var(--border); margin: 0 5px; }
-
-
-        #customModal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal-overlay {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-        }
-
-        .modal-content {
-            background: var(--bg-panel);
-            color: var(--text);
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            width: 90%;
-            max-width: 400px;
-            position: relative;
-            z-index: 1001;
-            direction: rtl; 
-            text-align: right;
-        }
-
-        .modal-content h3 {
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
-            font-size: 18px;
-        }
-
-        #modalInputs label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            margin-top: 10px;
-        }
-
-        #modalInputs input[type="text"], 
-        #modalInputs input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            background: var(--bg-app);
-            color: var(--text);
-        }
-        
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .modal-actions .primary {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-            line-height: 1;
-        }
-        .modal-actions .primary:hover {
-            opacity: 0.9;
-        }
-        
-        .modal-actions .secondary {
-            background: none;
-            color: var(--text);
-            border: 1px solid var(--border);
-            padding: 8px 15px;
-            cursor: pointer;
-            line-height: 1;
-        }
-        .btn.primary { border: none; } 
-    </style>
 </head>
+
 <body class="rtl-content">
 
     <div class="main-header">
@@ -362,20 +26,24 @@
         </div>
         <div class="system-tools">
             <button class="btn" onclick="toggleDir()" title="כיוון טקסט"><i class="fas fa-exchange-alt"></i></button>
-            <button class="btn" onclick="toggleTheme()" title="ערכת נושא"><i class="fas fa-moon" id="themeIcon"></i></button>
-            <button class="btn" onclick="downloadFile()" title="שמור קובץ" style="color: var(--primary)"><i class="fas fa-save"></i></button>
+            <button class="btn" onclick="toggleTheme()" title="ערכת נושא"><i class="fas fa-moon"
+                    id="themeIcon"></i></button>
+            <button class="btn" onclick="exportToDocx()" title="ייצוא כ-docx" style="color: #2b579a"><i
+                    class="fas fa-file-word"></i></button>
+            <button class="btn" onclick="downloadFile()" title="שמור קובץ" style="color: var(--primary)"><i
+                    class="fas fa-save"></i></button>
         </div>
     </div>
 
     <div class="workspace" id="workspace">
-        
+
         <div class="pane-container" id="codePane" style="flex-basis: 50%">
             <div class="pane-toolbar">
                 <button class="btn" onclick="copyCode()" title="העתק הכל"><i class="fas fa-copy"></i></button>
                 <button class="btn" onclick="clearAll()" title="נקה הכל"><i class="fas fa-trash"></i></button>
                 <span class="toolbar-label">Markdown Source</span>
             </div>
-            
+
             <div class="editor-area">
                 <div class="gutter" id="gutter">1</div>
                 <textarea id="editor" placeholder="הקוד יופיע כאן..."></textarea>
@@ -385,28 +53,32 @@
         <div class="resizer" id="resizer"></div>
 
         <div class="visual-wrapper" id="visualPane" style="flex-basis: 50%">
-            
+
             <div class="visual-toolbar">
                 <button class="btn" onclick="execCmd('undo')" title="בטל (Ctrl+Z)"><i class="fas fa-undo"></i></button>
-                <button class="btn" onclick="execCmd('redo')" title="בצע שוב (Ctrl+Y)"><i class="fas fa-redo"></i></button>
+                <button class="btn" onclick="execCmd('redo')" title="בצע שוב (Ctrl+Y)"><i
+                        class="fas fa-redo"></i></button>
                 <div class="sep"></div>
-                
+
                 <button class="btn" onclick="execCmd('bold')" title="מודגש"><i class="fas fa-bold"></i></button>
                 <button class="btn" onclick="execCmd('italic')" title="נטוי"><i class="fas fa-italic"></i></button>
-                <button class="btn" onclick="execCmd('strikethrough')" title="קו חוצה"><i class="fas fa-strikethrough"></i></button>
+                <button class="btn" onclick="execCmd('strikethrough')" title="קו חוצה"><i
+                        class="fas fa-strikethrough"></i></button>
                 <div class="sep"></div>
-                
+
                 <button class="btn" onclick="execCmd('formatBlock', 'H1')" title="כותרת 1"><b>H1</b></button>
                 <button class="btn" onclick="execCmd('formatBlock', 'H2')" title="כותרת 2">H2</button>
                 <div class="sep"></div>
 
-                <button class="btn" onclick="execCmd('insertUnorderedList')" title="רשימה"><i class="fas fa-list-ul"></i></button>
-                <button class="btn" onclick="execCmd('formatBlock', 'blockquote')" title="ציטוט"><i class="fas fa-quote-right"></i></button>
+                <button class="btn" onclick="execCmd('insertUnorderedList')" title="רשימה"><i
+                        class="fas fa-list-ul"></i></button>
+                <button class="btn" onclick="execCmd('formatBlock', 'blockquote')" title="ציטוט"><i
+                        class="fas fa-quote-right"></i></button>
                 <button class="btn" onclick="insertMarkdownTable()" title="טבלה"><i class="fas fa-table"></i></button>
-                
+
                 <button class="btn" onclick="insertCode()" title="קוד"><i class="fas fa-code"></i></button>
                 <button class="btn" onclick="insertImage()" title="תמונה"><i class="fas fa-image"></i></button>
-                
+
                 <span class="toolbar-label" style="margin-right: auto; margin-left: 10px;">Visual Editor</span>
             </div>
 
@@ -422,7 +94,7 @@
         <div class="modal-content">
             <h3 id="modalTitle"></h3>
             <div id="modalInputs">
-                </div>
+            </div>
             <div class="modal-actions">
                 <button id="modalConfirm" class="btn primary">אישור</button>
                 <button id="modalCancel" class="btn secondary">ביטול</button>
@@ -430,297 +102,7 @@
         </div>
     </div>
 
-    <script>
-        const editor = document.getElementById('editor');
-        const visual = document.getElementById('visualEditor');
-        const gutter = document.getElementById('gutter');
-        const themeIcon = document.getElementById('themeIcon');
-        
-        const customModal = document.getElementById('customModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalInputs = document.getElementById('modalInputs');
-        const modalConfirm = document.getElementById('modalConfirm');
-        const modalCancel = document.getElementById('modalCancel');
-
-        const turndownService = new TurndownService({
-            headingStyle: 'atx',
-            codeBlockStyle: 'fenced'
-        });
-        turndownService.use(turndownPluginGfm.gfm);
-
-        let isSyncing = false;
-        let syncTimeoutId = null;
-
-        function syncCodeToVisual() {
-             if (isSyncing) return;
-             isSyncing = true;
-            
-             if (syncTimeoutId) {
-                 clearTimeout(syncTimeoutId);
-             }
-
-             syncTimeoutId = setTimeout(() => {
-                 const md = editor.value;
-                 visual.innerHTML = marked.parse(md);
-                 
-                 updateGutter();
-                 isSyncing = false;
-                 syncTimeoutId = null;
-             }, 50); 
-        }
-
-        function syncVisualToCode() {
-            if (isSyncing) return;
-            isSyncing = true;
-
-            if (syncTimeoutId) {
-                 clearTimeout(syncTimeoutId);
-             }
-
-            syncTimeoutId = setTimeout(() => {
-                 const html = visual.innerHTML;
-                 const md = turndownService.turndown(html);
-                 editor.value = md;
-
-                 updateGutter();
-                 isSyncing = false;
-                 syncTimeoutId = null;
-             }, 50);
-        }
-        
-        editor.addEventListener('input', syncCodeToVisual);
-        visual.addEventListener('input', syncVisualToCode);
-
-        editor.addEventListener('scroll', () => gutter.scrollTop = editor.scrollTop);
-
-        function updateGutter() {
-            const lines = editor.value.split('\n').length;
-            gutter.innerHTML = Array(lines).fill(0).map((_, i) => i + 1).join('<br>');
-        }
-
-        function execCmd(command, value = null) {
-            document.execCommand(command, false, value);
-            syncVisualToCode(); 
-        }
-
-        function showCustomPrompt(title, fields) {
-            return new Promise(resolve => {
-                modalTitle.textContent = title;
-                modalInputs.innerHTML = ''; 
-
-                fields.forEach(field => {
-                    const label = document.createElement('label');
-                    label.setAttribute('for', field.id);
-                    label.textContent = field.label;
-                    
-                    const input = document.createElement('input');
-                    input.setAttribute('type', field.type || 'text');
-                    input.setAttribute('id', field.id);
-                    input.value = field.defaultValue || '';
-                    
-                    modalInputs.appendChild(label);
-                    modalInputs.appendChild(input);
-                });
-
-                customModal.style.display = 'flex';
-
-                const confirmHandler = () => {
-                    const results = {};
-                    fields.forEach(field => {
-                        const inputElement = document.getElementById(field.id);
-                        results[field.id] = inputElement.value;
-                    });
-                    
-                    cleanup();
-                    resolve(results);
-                };
-
-                const cancelHandler = () => {
-                    cleanup();
-                    resolve(null);
-                };
-
-                const cleanup = () => {
-                    modalConfirm.removeEventListener('click', confirmHandler);
-                    modalCancel.removeEventListener('click', cancelHandler);
-                    customModal.style.display = 'none';
-                };
-                
-                modalConfirm.onclick = null; 
-                modalCancel.onclick = null;
-                
-                modalConfirm.addEventListener('click', confirmHandler);
-                modalCancel.addEventListener('click', cancelHandler);
-            });
-        }
-
-        async function insertMarkdownTable() {
-            const results = await showCustomPrompt("יצירת טבלה", [
-                { id: 'rows', label: "מספר שורות (כולל כותרת)", type: 'number', defaultValue: '3' },
-                { id: 'cols', label: "מספר עמודות", type: 'number', defaultValue: '2' }
-            ]);
-
-            if (!results) return;
-
-            const rows = parseInt(results.rows) || 3;
-            const cols = parseInt(results.cols) || 2;
-
-            if (rows < 2 || cols < 1) { 
-                alert("מספר השורות צריך להיות לפחות 2 (כותרת+נתונים) ומספר העמודות לפחות 1.");
-                return;
-            }
-
-            const headerCells = Array(cols).fill(0).map((_, i) => `כותרת ${i + 1}`).join(' | ');
-            const headerRow = `| ${headerCells} |\n`;
-
-            const separatorCells = Array(cols).fill('---').join(' | ');
-            const separatorRow = `| ${separatorCells} |\n`;
-
-            const dataRowTemplate = Array(cols).fill('נתונים').join(' | ');
-            let dataRows = '';
-            for (let r = 1; r < rows; r++) { 
-                dataRows += `| ${dataRowTemplate} |\n`;
-            }
-
-            const mdTable = `\n${headerRow}${separatorRow}${dataRows}\n`;
-
-            const start = editor.selectionStart;
-            const end = editor.selectionEnd;
-            const value = editor.value;
-
-            editor.value = value.substring(0, start) + mdTable + value.substring(end);
-            
-            editor.selectionStart = editor.selectionEnd = start + mdTable.length;
-            editor.focus();
-            
-            syncCodeToVisual();
-        }
-        
-        async function insertImage() {
-            const results = await showCustomPrompt("הוספת תמונה", [
-                { id: 'url', label: "כתובת URL לתמונה", type: 'text', defaultValue: 'https://' },
-                { id: 'alt', label: "טקסט חלופי (Alt Text)", type: 'text', defaultValue: '' }
-            ]);
-
-            if (!results) return;
-
-            const { url, alt } = results;
-            
-            const mdImage = `![${alt || 'תמונה'}](${url})\n\n`;
-
-            const start = editor.selectionStart;
-            const end = editor.selectionEnd;
-            const value = editor.value;
-
-            editor.value = value.substring(0, start) + mdImage + value.substring(end);
-            
-            editor.selectionStart = editor.selectionEnd = start + mdImage.length;
-            editor.focus();
-            
-            syncCodeToVisual();
-        }
-
-        function insertCode() {
-            const mdCode = "\n```javascript\n// כתוב את הקוד שלך כאן\n```\n\n";
-            
-            const start = editor.selectionStart;
-            const end = editor.selectionEnd;
-            const value = editor.value;
-
-            editor.value = value.substring(0, start) + mdCode + value.substring(end);
-            
-            editor.selectionStart = editor.selectionEnd = start + 4 + "javascript\n".length; 
-            editor.focus();
-            
-            syncCodeToVisual();
-        }
-
-
-        window.onload = () => {
-            editor.value = "# עורך היברידי - גרסה סופית\n\n**כל הפונקציות עובדות באופן יציב!** הוטמע CSS להצגת **Placeholder** לתמונות עם נתיב יחסי או שבור (שאינו מתחיל ב-http/s).\n\n**בדיקת תמונה (Placeholder):**\n\n![תמונה מקומית או שבורה](images/image1.jpg)\n\n**בדיקת תמונה (URL תקין):**\n\n![תמונה לדוגמה](https://via.placeholder.com/150)\n\n**בדיקת קוד:**\n\n```javascript\nconsole.log('שלום עולם!');\n```\n\n**בדיקת קישור (Hyperlink):**\n\n[זהו קישור בדיקה](https://example.com)\n\n ";
-            syncCodeToVisual(); 
-            if (document.body.getAttribute('data-theme') === 'dark') {
-                themeIcon.classList.replace('fa-moon', 'fa-sun');
-            } else {
-                themeIcon.classList.replace('fa-sun', 'fa-moon');
-            }
-        };
-
-        function toggleTheme() {
-            const body = document.body;
-            const current = body.getAttribute('data-theme');
-            
-            if (current === 'dark') {
-                body.setAttribute('data-theme', 'light');
-                themeIcon.classList.replace('fa-sun', 'fa-moon');
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                themeIcon.classList.replace('fa-moon', 'fa-sun');
-            }
-        }
-
-        function toggleDir() {
-            document.body.classList.toggle('rtl-content');
-            document.body.classList.toggle('ltr-content');
-        }
-
-        function copyCode() {
-            editor.select();
-            document.execCommand('copy');
-            alert('הקוד הועתק!');
-        }
-
-        function clearAll() {
-            if(confirm('למחוק הכל?')) {
-                editor.value = '';
-                visual.innerHTML = '';
-                updateGutter();
-            }
-        }
-        
-        function downloadFile() {
-            const blob = new Blob([editor.value], {type: 'text/markdown'});
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'document.md';
-            a.click();
-        }
-
-        const resizer = document.getElementById('resizer');
-        const leftPane = document.getElementById('codePane');
-        const rightPane = document.getElementById('visualPane');
-        let isResizing = false;
-
-        resizer.addEventListener('mousedown', (e) => {
-            isResizing = true;
-            document.body.style.cursor = 'col-resize';
-            e.preventDefault();
-        });
-
-        document.addEventListener('mouseup', () => {
-            isResizing = false;
-            document.body.style.cursor = 'default';
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isResizing) return;
-            const containerWidth = document.getElementById('workspace').offsetWidth;
-            const percent = (e.clientX / containerWidth) * 100;
-            if (percent > 20 && percent < 80) {
-                leftPane.style.flexBasis = percent + '%';
-                rightPane.style.flexBasis = (100 - percent) + '%';
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key.toLowerCase() === 'z' && document.activeElement !== editor) {
-                e.preventDefault(); document.execCommand('undo');
-            }
-            if (e.ctrlKey && e.key.toLowerCase() === 'y' && document.activeElement !== editor) {
-                e.preventDefault(); document.execCommand('redo');
-            }
-        });
-
-    </script>
+    <script src="script.js"></script>
 </body>
+
 </html>
